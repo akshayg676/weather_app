@@ -1,4 +1,7 @@
 import { useState } from "react";
+import { useQuery } from "react-query";
+import axios from "axios";
+
 // import icons
 import {
   IoMdSunny,
@@ -22,25 +25,45 @@ import { TbTemperatureCelsius } from "react-icons/tb";
 import { ImSpinner8 } from "react-icons/im";
 
 const App = () => {
-  const [loading, setLoading] = useState(true);
+  const [location, setLocation] = useState("");
+  const { isLoading, isError, data, refetch } = useQuery(
+    "weatherData",
+    () => {
+      return axios({
+        method: "get",
+        url: `https://api.openweathermap.org/data/2.5/weather?q=${location}&units=metric&APPID=f7489a46d7d05bf4027a1b1ee2a42639`,
+      });
+    },
+    {
+      enabled: false, // will not fire get request on component mount
+    }
+  );
+
+  //function to get weather information of entered location
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    refetch();
+    setLocation("");
+  };
+  console.log(isError);
   return (
     <div className="w-full h-screen bg-gradient-to-r from-[#AA076B] to-[#61045F] flex flex-col items-center justify-center px-4 lg:px-0">
       <form
-        className={`${
-          true ? "animate-shake" : "animate-none"
-        } h-16 bg-black/30 w-full max-w-[450px]
-      rounded-full backdrop-blur-[32px] mb-8`}
+        className=" h-16 bg-black/30 w-full max-w-[450px]
+      rounded-full backdrop-blur-[32px] mb-8"
       >
         <div className="h-full relative flex items-center justify-between p-2">
           <input
-            // onChange={(e) => handleInput(e)}
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
             className="flex-1 bg-transparent outline-none placeholder:text-white text-white text-[15px] font-light pl-6 h-full"
             type="text"
             placeholder="Search by city or country"
           />
           <button
-            // onClick={(e) => handleSubmit(e)}
-            className="bg-[#1ab8ed] hover:bg-[#15abdd] w-20 h-12 rounded-full flex justify-center items-center transition"
+            disabled={!location.length > 0}
+            onClick={handleSubmit}
+            className="bg-[#1ab8ed] enabled:hover:bg-[#15abdd] w-20 h-12 rounded-full flex justify-center items-center transition disabled:opacity-40"
           >
             <IoMdSearch className="text-2xl text-white" />
           </button>
@@ -48,7 +71,7 @@ const App = () => {
       </form>
       {/* card */}
       <div className="w-full max-w-[450px] bg-black/20 min-h-[500px] text-white backdrop-blur-[32px] rounded-[32px] py-12 px-6">
-        {loading ? (
+        {isLoading ? (
           <div className="w-full h-full flex justify-center items-center">
             <ImSpinner8 className="text-white text-5xl animate-spin" />
           </div>
