@@ -27,7 +27,9 @@ import { ImSpinner8 } from "react-icons/im";
 const App = () => {
   const date = new Date();
   const [location, setLocation] = useState("");
-  const { isLoading, isError, data, refetch } = useQuery(
+
+  // fetching the weather data using react query
+  const { isLoading, isError, error, isFetching, data, refetch } = useQuery(
     "weatherData",
     () => {
       return axios({
@@ -71,9 +73,14 @@ const App = () => {
       </div>
       {/* card */}
       <div className="w-full max-w-[450px] bg-black/20 min-h-[500px] text-white backdrop-blur-[32px] rounded-[32px] py-12 px-6">
-        {isLoading ? (
+        {isLoading || isFetching ? (
           <div className="w-full h-full flex justify-center items-center">
             <ImSpinner8 className="text-white text-5xl animate-spin" />
+          </div>
+        ) : isError ? (
+          <div className="w-full h-full flex justify-center items-center">
+            {error.response.data.message.charAt(0).toUpperCase() +
+              error.response.data.message.slice(1)}
           </div>
         ) : data ? (
           <div>
