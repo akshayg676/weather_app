@@ -42,11 +42,6 @@ const App = () => {
     }
   );
 
-  // here handleChangeWeatherIcon is called only when the weather.main value changes
-  const weatherIcon = useMemo(() => {
-    return handleChangeWeatherIcon(data?.data.weather[0].main);
-  }, [data?.data.weather[0].main]);
-
   //function to change weather icon
   const handleChangeWeatherIcon = (val) => {
     switch (val) {
@@ -66,6 +61,10 @@ const App = () => {
         return <IoMdThunderstorm />;
     }
   };
+  // here handleChangeWeatherIcon is called only when the weather.main value changes
+  const weatherIcon = useMemo(() => {
+    return handleChangeWeatherIcon(data?.data.weather[0].main);
+  }, [data?.data.weather[0].main]);
 
   //function to get weather information of entered location
   const handleSubmit = () => {
@@ -85,7 +84,7 @@ const App = () => {
             onChange={(e) => setLocation(e.target.value)}
             className="flex-1 bg-transparent outline-none placeholder:text-white text-white text-[15px] font-light pl-6 h-full"
             type="text"
-            placeholder="Search by city or country"
+            placeholder="Search by city"
           />
           <button
             disabled={!location.length > 0}
