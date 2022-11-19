@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "react-query";
 import axios from "axios";
 
@@ -41,6 +41,31 @@ const App = () => {
       enabled: false, // will not fire get request on component mount
     }
   );
+
+  // here handleChangeWeatherIcon is called only when the weather.main value changes
+  const weatherIcon = useMemo(() => {
+    return handleChangeWeatherIcon(data?.data.weather[0].main);
+  }, [data?.data.weather[0].main]);
+
+  //function to change weather icon
+  const handleChangeWeatherIcon = (val) => {
+    switch (val) {
+      case "Clouds":
+        return <IoMdCloudy />;
+      case "Haze":
+        return <BsCloudHaze2Fill />;
+      case "Rain":
+        return <IoMdRainy className="text-[#31cafb]" />;
+      case "Clear":
+        return <IoMdSunny className="text-[#ffde33]" />;
+      case "Drizzle":
+        return <BsCloudDrizzleFill className="text-[#31cafb]" />;
+      case "Snow":
+        return <IoMdSnow className="text-[#31cafb]" />;
+      case "Thunderstorm":
+        return <IoMdThunderstorm />;
+    }
+  };
 
   //function to get weather information of entered location
   const handleSubmit = () => {
@@ -88,7 +113,8 @@ const App = () => {
             <div className="flex items-center gap-x-5">
               {/* icon */}
               <div className="text-[87px]">
-                <IoMdSearch />
+                {/* <IoMdSearch /> */}
+                {weatherIcon}
               </div>
               <div>
                 {/* country name */}
